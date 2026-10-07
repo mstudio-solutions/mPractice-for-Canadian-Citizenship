@@ -4,12 +4,11 @@
 Source files: data/ch01.json ... data/ch10.json (one per Discover Canada chapter).
 
 Authoring format for each question:
-  t   type: "s" (single answer), "tf" (true/false), "m" (choose TWO, not used
-      in the Canadian test but still supported)
+  t   type: "s" (single answer) or "tf" (true/false), like the real test
   tp  topic label
   q   question text (for "tf", the statement only)
-  a   correct answer: string ("s"), list of two strings ("m"), true/false ("tf")
-  w   wrong answers: three for "s", two for "m", none for "tf"
+  a   correct answer: string ("s") or true/false ("tf")
+  w   wrong answers: three for "s", none for "tf"
   k   1 if it is a key question (optional)
   e   explanation
 
@@ -52,17 +51,15 @@ def build_question(qid, chapter, src):
         options = ["True", "False"]
         answer = [0 if src["a"] else 1]
         text = TF_PREFIX + src["q"]
-    elif t in ("s", "m"):
-        correct = [src["a"]] if t == "s" else src["a"]
+    elif t == "s":
         wrong = src.get("w", [])
-        need = (1, 3) if t == "s" else (2, 2)
-        if not isinstance(correct, list) or (len(correct), len(wrong)) != need:
-            fail(f"{where}: '{t}' needs {need[0]} correct and {need[1]} wrong answers")
-        options = correct + wrong
+        if not isinstance(src["a"], str) or len(wrong) != 3:
+            fail(f"{where}: 's' needs one correct answer and three wrong answers")
+        options = [src["a"]] + wrong
         if len(set(o.strip().lower() for o in options)) != 4:
             fail(f"{where}: duplicate options")
         rng.shuffle(options)
-        answer = sorted(options.index(c) for c in correct)
+        answer = [options.index(src["a"])]
         text = src["q"]
     else:
         fail(f"{where}: unknown type {t!r}")
@@ -71,7 +68,7 @@ def build_question(qid, chapter, src):
         "id": qid,
         "chapter": chapter,
         "topic": src["tp"],
-        "type": {"s": "single", "m": "multi", "tf": "truefalse"}[t],
+        "type": {"s": "single", "tf": "truefalse"}[t],
         "q": text,
         "options": options,
         "answer": answer,
@@ -114,7 +111,7 @@ def main():
         INDEX.write_text(new_html, encoding="utf-8")
 
     qs = bank["questions"]
-    counts = {t: sum(q["type"] == t for q in qs) for t in ("single", "multi", "truefalse")}
+    counts = {t: sum(q["type"] == t for q in qs) for t in ("single", "truefalse")}
     print(f"{len(qs)} questions ({counts}), {sum(q['key'] for q in qs)} key")
 
 

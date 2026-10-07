@@ -9,12 +9,13 @@ mPractice for Canadian Citizenship helps you get ready for the Canadian citizens
 ## Features
 
 - 501 practice questions across 10 study guide topics, each with an explanation
-- **Full Mock test** – 20 questions, pass = 75% (15 correct), same as the real test
+- **Full Mock test** – 20 questions, pass = 75% (15 correct), same as the real test. Answers and explanations are shown at the end, like the real test
 - Multiple choice and True/False questions, like the real test
 - Practice by topic, Key questions or Random
 - Timer per question (30s / 45s / 60s / 90s / 135s) or untimed
 - Fixed answer layout, with optional shuffle
 - Review mistakes with explanations
+- Recent scores for this tab, cleared when you close it
 - Where older copies of the guide are now out of date (the Sovereign, the oath, number of electoral districts, population, NAFTA, G8), the explanation gives today's fact and what the guide says
 - No sign-up, no ads, no cookies – one HTML file, no backend
 
@@ -27,7 +28,7 @@ mPractice for Canadian Citizenship helps you get ready for the Canadian citizens
 
 ## Privacy
 
-mPractice does not collect any personal information. Answers and scores stay in your browser while the page is open. Full policy: open the app → **About** → **Privacy Policy**.
+mPractice does not collect any personal information. Answers and recent scores stay in your browser while the page is open and are cleared when you close the tab. Full policy: open the app → **About** → **Privacy Policy**.
 
 ## Project structure
 
