@@ -1,0 +1,27 @@
+Copyright (c) 2026 Martin Yeung (mStudio). All rights reserved.
+
+This repository and its contents (source code, design and app content
+written by mStudio) are the property of Martin Yeung, trading as mStudio.
+
+The source code is made public for viewing only. No licence is granted
+to copy, modify, distribute, publish, sublicense or sell any part of it,
+or to use it to build another app or website, without prior written
+permission from the copyright holder.
+
+Third-party material:
+- The practice questions are based on "Discover Canada: The Rights and
+  Responsibilities of Citizenship", published by Immigration, Refugees
+  and Citizenship Canada (IRCC). That material remains the property of
+  its owner (His Majesty the King in Right of Canada) and is not covered
+  by this notice. No text from the guide is copied.
+- Open-source libraries used by this project (such as Tailwind CSS)
+  keep their own licences.
+
+mPractice for Canadian Citizenship is an unofficial practice tool. It is
+not affiliated with, or endorsed by, the Government of Canada or IRCC.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM THE USE OF THE SOFTWARE.
+
+Permission requests: mstudiosolutions@gmail.com
