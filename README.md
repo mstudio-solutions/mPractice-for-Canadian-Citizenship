@@ -36,12 +36,19 @@ mPractice does not collect any personal information. Answers and recent scores s
 - `questions.json` – the question bank as plain JSON (generated)
 - `data/ch01.json` … `data/ch10.json` – question source, one file per study guide topic
 - `scripts/build.py` – checks the questions and rebuilds `questions.json` and `index.html`
+- `privacy.html` – standalone Privacy Policy page (used by the App Store listing)
+- `ios/`, `capacitor.config.json`, `package.json`, `scripts/build-www.mjs` – the iOS app (see [IOS.md](IOS.md))
+- `appstore/` – App Store listing text, icon and screenshots
+
+## iOS app
+
+The same page is also packaged as an iPhone app with Capacitor. It works offline and saves progress on the device. See [IOS.md](IOS.md) for how to build and submit it.
 
 ## Edit or add questions
 
 1. Edit a file in `data/`. Put the correct answer in `a` and wrong answers in `w` (for True/False, `a` is `true` or `false`). Answer order is shuffled automatically.
 2. Run `python3 scripts/build.py`
-3. Commit `data/`, `questions.json` and `index.html`.
+3. Commit `data/`, `questions.json` and `index.html`. For the iOS app, also run `npm run ios` on the Mac before archiving.
 
 `python3 scripts/build.py --check` fails if the generated files are out of date.
 

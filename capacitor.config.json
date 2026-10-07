@@ -1,0 +1,11 @@
+{
+  "appId": "com.mstudiosolutions.mpracticecanada",
+  "appName": "mPractice CA",
+  "webDir": "www",
+  "backgroundColor": "#ffffff",
+  "ios": {
+    "contentInset": "always",
+    "backgroundColor": "#ffffff",
+    "scrollEnabled": true
+  }
+}

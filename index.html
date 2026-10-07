@@ -13,6 +13,8 @@ body{background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMac
 .serif{font-family:Georgia,"Times New Roman",Times,serif;letter-spacing:-0.02em}
 *{min-width:0}
 .hidden{display:none}
+.is-app .web-only{display:none}
+body:not(.is-app) .app-only{display:none}
 </style>
 </head>
 <body class="min-h-screen">
@@ -102,21 +104,23 @@ body{background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMac
     <div class="mt-5 rounded-[20px] bg-white border border-[#E5E7EB] p-5 space-y-5 text-[15px] leading-[1.6]">
       <section>
         <h3 class="font-bold text-[17px]">The short version</h3>
-        <p class="mt-1">mPractice does not collect, store or share any personal information. There is no account, no sign-up, no ads and no cookies. We count visits anonymously.</p>
+        <p class="mt-1">mPractice does not collect, store or share any personal information. There is no account, no sign-up, no ads and no cookies.<span class="web-only"> We count visits anonymously.</span></p>
       </section>
       <section>
         <h3 class="font-bold text-[17px]">What we collect</h3>
-        <p class="mt-1">No personal information. All questions are built into the app. Your answers and scores are never sent to us or to anyone else. We only see anonymous visit counts (see below).</p>
+        <p class="mt-1">No personal information. All questions are built into the app. Your answers and scores are never sent to us or to anyone else.<span class="web-only"> We only see anonymous visit counts (see below).</span></p>
       </section>
       <section>
         <h3 class="font-bold text-[17px]">Your practice history</h3>
-        <p class="mt-1">Recent scores are kept only in your browser while the page is open. They are cleared when you close the tab. Nothing is saved on a server.</p>
+        <p class="mt-1 web-only">On the website, recent scores are kept only in your browser while the page is open. They are cleared when you close the tab. Nothing is saved on a server.</p>
+        <p class="mt-1 app-only">In the app, your recent scores, your settings and the questions you have already done are saved only on this device, so you can carry on next time. They are never sent to us or to anyone else. You can remove them with the Clear button under Recent Sessions, or by deleting the app.</p>
       </section>
       <section>
         <h3 class="font-bold text-[17px]">Cookies, analytics and ads</h3>
-        <p class="mt-1">mPractice does not use cookies or advertising. We use <a href="https://www.cloudflare.com/web-analytics/" target="_blank" rel="noopener" class="text-[#D52B1E] font-bold underline underline-offset-2">Cloudflare Web Analytics ↗</a> to count visits anonymously. It does not use cookies and does not collect personal information. We only see totals, such as page views, country, browser and whether you use a phone or a computer. See the <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener" class="text-[#D52B1E] font-bold underline underline-offset-2">Cloudflare Privacy Policy ↗</a>.</p>
+        <p class="mt-1 app-only">The app does not use cookies, analytics, tracking or advertising.</p>
+        <p class="mt-1 web-only">mPractice does not use cookies or advertising. We use <a href="https://www.cloudflare.com/web-analytics/" target="_blank" rel="noopener" class="text-[#D52B1E] font-bold underline underline-offset-2">Cloudflare Web Analytics ↗</a> to count visits anonymously. It does not use cookies and does not collect personal information. We only see totals, such as page views, country, browser and whether you use a phone or a computer. See the <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener" class="text-[#D52B1E] font-bold underline underline-offset-2">Cloudflare Privacy Policy ↗</a>.</p>
       </section>
-      <section>
+      <section class="web-only">
         <h3 class="font-bold text-[17px]">Hosting</h3>
         <p class="mt-1">The website is hosted on GitHub Pages. Like most web hosts, GitHub may log basic technical data (such as your IP address) for security. See the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener" class="text-[#D52B1E] font-bold underline underline-offset-2">GitHub Privacy Statement ↗</a>.</p>
       </section>
@@ -178,6 +182,31 @@ const S = {
   decks: {},  // one shuffled deck of ids per pool, so nothing repeats until the pool is used up
 };
 let timer = null;
+
+/* In the iOS app, settings, scores and progress are kept on the device. The website keeps them only for the open tab. */
+const IS_APP = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+const STORE_KEY = 'mpractice-ca';
+const BANK_SIG = QUESTIONS.length + ':' + QUESTIONS.reduce((h,q)=>{ for(const c of q.q) h = (h*31 + c.charCodeAt(0)) | 0; return h; }, 7);
+function loadSaved(){
+  if(!IS_APP) return;
+  try{
+    const d = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+    if(!d) return;
+    if(['exam','random','topic','key'].includes(d.mode)) S.mode = d.mode;
+    if(TOPICS.some(t=>t.chapter===d.topic)) S.topic = d.topic;
+    if([10,20,30].includes(d.batch)) S.batch = d.batch;
+    if(d.time===null || [30,45,60,90,135].includes(d.time)) S.time = d.time;
+    if(typeof d.shuffle==='boolean') S.shuffle = d.shuffle;
+    if(Array.isArray(d.history)) S.history = d.history.slice(0,20);
+    if(d.sig===BANK_SIG && d.decks && typeof d.decks==='object') S.decks = d.decks;  // question ids change when the bank changes
+  }catch(e){}
+}
+function save(){
+  if(!IS_APP) return;
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify({sig:BANK_SIG, mode:S.mode, topic:S.topic, batch:S.batch, time:S.time, shuffle:S.shuffle, history:S.history, decks:S.decks}));
+  }catch(e){}
+}
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -280,7 +309,7 @@ function renderDashboard(){
     </div>`).join('');
 
   const history = S.history.length===0
-    ? `<div class="mt-3 text-[13px] text-[#6B7280] leading-[1.6]">No history yet. Press Start to begin – your scores will appear here. Cleared when you close the tab, for privacy.</div>`
+    ? `<div class="mt-3 text-[13px] text-[#6B7280] leading-[1.6]">No history yet. Press Start to begin – your scores will appear here. ${IS_APP? 'Saved on this device only.' : 'Cleared when you close the tab, for privacy.'}</div>`
     : `<div class="mt-3 space-y-2 max-h-[260px] overflow-auto pr-1">${S.history.map(h=>`
         <div class="flex items-center justify-between rounded-[12px] border border-[#E5E7EB] px-3 py-2.5 bg-white">
           <div>
@@ -401,7 +430,10 @@ function renderDashboard(){
       </details>
 
       <div class="rounded-[24px] bg-white border border-[#E5E7EB] p-5">
-        <h4 class="font-bold text-[14px]">Recent Sessions (This Tab Only)</h4>
+        <div class="flex items-center justify-between gap-2">
+          <h4 class="font-bold text-[14px]">Recent Sessions (${IS_APP? 'Saved on This Device' : 'This Tab Only'})</h4>
+          ${IS_APP && S.history.length? '<button data-act="clear" class="text-[12px] font-bold text-[#D52B1E] underline underline-offset-2">Clear</button>' : ''}
+        </div>
         ${history}
       </div>
 
@@ -529,6 +561,7 @@ function startTimer(){
 
 function startQuiz(){
   S.qs = pickBatch();
+  save();
   S.idx = 0; S.answers = new Array(S.qs.length).fill(null); S.feedback = false;
   showView('quiz');
   renderQuiz(); startTimer();
@@ -557,6 +590,7 @@ function finish(){
   const total = S.qs.length, correct = S.answers.filter(a=>a&&a.correct).length;
   const passed = isPass(correct, total);
   S.history = [{label: modeLabel(S.mode, S.topic), score: correct, total, passed, date: new Date().toLocaleString('en-CA')}, ...S.history].slice(0,20);
+  save();
   renderResult(correct, total, passed);
   showView('result');
 }
@@ -633,11 +667,12 @@ document.addEventListener('click', e=>{
   const v = b.dataset.v;
   switch(b.dataset.act){
     case 'page': clearInterval(timer); showView(v); break;
-    case 'mode': S.mode = v; renderDashboard(); break;
-    case 'topic': S.mode = 'topic'; S.topic = parseInt(v); renderDashboard(); break;
-    case 'batch': S.batch = parseInt(v); renderDashboard(); break;
-    case 'time': S.time = v==='none'? null : parseInt(v); renderDashboard(); break;
-    case 'shuffle': S.shuffle = !S.shuffle; renderDashboard(); break;
+    case 'mode': S.mode = v; save(); renderDashboard(); break;
+    case 'topic': S.mode = 'topic'; S.topic = parseInt(v); save(); renderDashboard(); break;
+    case 'batch': S.batch = parseInt(v); save(); renderDashboard(); break;
+    case 'time': S.time = v==='none'? null : parseInt(v); save(); renderDashboard(); break;
+    case 'shuffle': S.shuffle = !S.shuffle; save(); renderDashboard(); break;
+    case 'clear': if(confirm('Clear your recent sessions and progress?')){ S.history = []; S.decks = {}; save(); renderDashboard(); } break;
     case 'start': startQuiz(); break;
     case 'answer': answer(parseInt(v)); break;
     case 'next': next(); break;
@@ -645,6 +680,8 @@ document.addEventListener('click', e=>{
   }
 });
 
+if(IS_APP) document.body.classList.add('is-app');
+loadSaved();
 document.querySelectorAll('.js-total').forEach(e=> e.textContent = stats.total);
 setOfficialLinks();
 showView('dashboard');
