@@ -12,8 +12,8 @@ Copy these into App Store Connect. Character limits are in brackets.
 - **Secondary category**: Reference
 - **Age rating**: 4+ (answer "None" to every question)
 - **Price**: choose in Pricing and Availability
-- **Privacy Policy URL**: https://mstudio-solutions.github.io/mPractice-for-Canadian-Citizenship/privacy.html
-- **Support URL**: https://mstudio-solutions.github.io/mPractice-for-Canadian-Citizenship/
+- **Privacy Policy URL**: https://mstudio-solutions.github.io/mpractice-canada/privacy/
+- **Support URL**: https://mstudio-solutions.github.io/mpractice-canada/
 - **Copyright**: 2026 mStudio
 
 ## Promotional text (170)
